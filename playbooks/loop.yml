@@ -1,0 +1,15 @@
+---
+- hosts: client
+  become: yes
+  tasks:
+  - name: create users
+    user:
+      name: "{{ item }}"
+      state: present
+      group: wheel
+    loop:
+      - violet
+      - graham
+      - bethany
+
+

@@ -1,0 +1,49 @@
+---
+- hosts: webservers
+  become: yes
+  tasks:
+  - name: install apache
+    yum:
+      name: httpd
+      state: latest
+  - name: create users and add to the apache group
+    user:
+      name: "{{ item }}"
+      group: apache
+    loop:
+      - will
+      - myles
+  - name: create index.html
+    template:
+      src: /home/clovis/ansible/templates/index.j2
+      dest: /var/www/html/index.html
+      owner: apache
+      group: apache
+      mode: 0644
+  - name: start and enable apache
+    service: 
+      name: httpd
+      state: started
+      enabled: yes
+
+- hosts: client
+  become: yes
+  tasks:
+  - name: install postgresql
+    yum:
+      name: postgresql-server
+      state: latest
+  - name: initialize the db cluster
+    command: /usr/bin/postgresql-setup --initdb
+  - name: create users
+    user:
+      name: "{{ item }}"
+      group: postgres
+    loop:
+      - corey
+      - aaron
+  - name: start and enable postgresql
+    service:
+      name: postgresql
+      state: started
+      enabled: yes

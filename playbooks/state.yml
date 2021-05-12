@@ -1,0 +1,65 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: Install backup package
+    yum:
+      name: linuxtest-backup-software
+      state: present
+    ignore_errors: yes
+  - name: copy facts
+    copy:
+      content: "{{ ansible_default_ipv4.address }}"
+      dest: /root/addresses
+    when: ansible_os_family == "RedHat"
+
+- hosts: webservers:client
+  become: yes
+  tasks:
+  - name: Install git
+    yum:
+      name: git
+      state: present
+
+- hosts: webservers
+  become: yes
+  tasks:
+  - name: install apache
+    yum:
+      name: httpd
+      state: installed
+  - name: start apache service
+    service: 
+      name: httpd
+      state: started
+      enabled: yes
+  - name: create index.html
+    copy:
+      content: "Waiting for content"
+      dest: /var/www/html/index.html
+      owner: apache
+      group: apache
+      mode: 0644
+
+- hosts: client
+  become: yes
+  user: clovis
+  tasks:
+  - name: create users
+    user:
+      name: dba
+      state: present
+  - name: create file
+    file:
+      path: /root/DBAstuff.txt
+      state: touch
+  - name: copy file
+    copy:
+      remote_src: yes
+      src: /root/DBAstuff.txt
+      dest: /home/dba/DBAstuff.txt
+      owner: dba
+      group: dba
+      mode: 0600
+
+

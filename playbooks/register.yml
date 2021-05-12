@@ -1,0 +1,15 @@
+---
+- hosts: localhost
+  tasks:
+  - name: create a file and register the output
+    file:
+      path: /tmp/testfile
+      state: touch
+    register: var
+  - name: display debug message
+    debug:
+      msg: "Registered output is {{ var }}"
+  - name: edit file
+    lineinfile:
+      path: /tmp/testfile
+      line: "The uid is {{ var.uid }} and the gid is {{ var.gid }}"

@@ -1,0 +1,14 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: install apache
+    yum:
+      name: httpd
+      state: present
+    when: ansible_hostname == "client2-node" or ansible_hostname == "webserver1"
+  - name: copy file
+    copy:
+      src: /home/clovis/index.html
+      dest: /var/www/html/index.html
+    when: ansible_hostname == "client2-node"

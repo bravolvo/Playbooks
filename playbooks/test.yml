@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  become: yes
+  tasks:
+  - name: copy facts
+    copy:
+      content: "{{ ansible_default_ipv4.address }}"
+      dest: /root/addresses
+    when: ansible_os_family == "RedHat"
+

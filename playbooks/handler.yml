@@ -1,0 +1,17 @@
+---
+- hosts: webserver1
+  become: yes
+  tasks:
+  - name: update httpd.conf
+    replace:
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^ServerAdmin.*$'
+      replace: 'ServerAdmin clovis@localhost'
+      backup: yes
+    notify: "restart web server"
+  handlers:
+  - name: "restart web server"
+    service:
+      name: httpd
+      state: restarted
+

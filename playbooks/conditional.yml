@@ -1,0 +1,18 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: Install backup package
+    yum:
+      name: linuxtest_backup_package
+      ststa: present
+    ignore_errors: yes
+  - name: check an archive file
+    shell: "ls /root/archive.tar"
+    register: "arch_file"
+    ignore_errors: true
+  - name: create an archive file
+    file:
+      path: /root/archive.tar
+      state: touch
+    when: arch_file is failed  
